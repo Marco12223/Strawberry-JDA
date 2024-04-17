@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+    <property name="LOG_PATTERN"
+              value="%gray([) %boldYellow(%d{dd.MM.YY} - %d{HH:mm:ss}) %gray(] [) %highlight(%level) %gray(]) %gray([) %boldYellow(%-35.-35logger{0}) %gray(]) %green(%msg%n%throwable)"/>
+    <logger name="net.dv8tion.jda" level="info"/>
+    <logger name="dev.arbjerg.lavalink" level="INFO"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                ${LOG_PATTERN}
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>
+            ./logs/latest.log
+        </file>
+        <encoder>
+            <pattern>
+                [ %d{dd.MM.YY} - %d{HH:mm:ss} ] [ %level ] [ %-15.-15logger{0} ] %msg%n%throwable
+            </pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>
+                ./logs/archive/log-%d{yyyy-MM-dd}-%i.log.zip
+            </fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <maxHistory>100</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ROLLING_FILE"/>
+    </root>
+
+</configuration>
