@@ -47,8 +47,6 @@ public class SlashCommandHandler extends ListenerAdapter {
             return;
         }
 
-        // The slash command exists with such name, execute it
-        slashCommand.execute(event);
     }
 
 }
