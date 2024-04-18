@@ -141,7 +141,6 @@ public class AudioHandler extends AbstractAudioLoadResultHandler  {
                             if(playlistSize != null) {
                                 event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.success.title"), LanguageHandler.Language(lang, "values.playCommand.embed.success.description").replace("{size}", playlistSize.toString()), null, event.getUser().getAvatarUrl(), fields, null, playingTrack.getInfo().getArtworkUrl()))
                                         .addComponents(buttonsRow, menuRow)
-                                        .setEphemeral(false)
                                         .queue(message -> {
                                             message.retrieveOriginal().queue(reMessage -> {
                                                 Strawberry.panelMessage.put(event.getGuild().getIdLong(), Map.of("channel", reMessage.getChannelIdLong(), "message", reMessage.getIdLong()));
@@ -150,7 +149,6 @@ public class AudioHandler extends AbstractAudioLoadResultHandler  {
                             } else {
                                 event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.success.title"), null, null, event.getUser().getAvatarUrl(), fields, null, playingTrack.getInfo().getArtworkUrl()))
                                         .addComponents(buttonsRow, menuRow)
-                                        .setEphemeral(false)
                                         .queue(message -> {
                                             message.retrieveOriginal().queue(reMessage -> {
                                                 Strawberry.panelMessage.put(event.getGuild().getIdLong(), Map.of("channel", reMessage.getChannelIdLong(), "message", reMessage.getIdLong()));
