@@ -1,9 +1,14 @@
 package de.marco1223.strawberry;
 
 import de.marco1223.strawberry.commands.music.*;
+import de.marco1223.strawberry.commands.system.langCommand;
+import de.marco1223.strawberry.commands.system.pingCommand;
 import de.marco1223.strawberry.handlers.SlashCommandHandler;
 import de.marco1223.strawberry.handlers.api.AuthHandler;
+import de.marco1223.strawberry.handlers.api.GuildHandler;
 import de.marco1223.strawberry.handlers.music.ButtonHandler;
+import de.marco1223.strawberry.listeners.system.GuildJoinListener;
+import de.marco1223.strawberry.listeners.system.GuildLeaveListener;
 import de.marco1223.strawberry.tasks.LanguageLocaleUpdateTask;
 import de.marco1223.strawberry.tasks.LanguageUpdateTask;
 import dev.arbjerg.lavalink.client.Helpers;
@@ -79,6 +84,12 @@ public class Strawberry {
         JDALogger.getLog(Strawberry.class).info("User count: " + shardManager.getGuilds().stream().mapToInt(Guild::getMemberCount).sum());
         JDALogger.getLog(Strawberry.class).info("-".repeat(54));
 
+        for(Guild guild : shardManager.getGuilds()) {
+            if (!GuildHandler.guildExists(guild.getId())) {
+                GuildHandler.createGuild(guild);
+            }
+        }
+
         registerLavalinkNodes(lavalinkClient);
         registerLavalinkListeners();
 
@@ -96,11 +107,13 @@ public class Strawberry {
 
         final var slashCommandHandler = new SlashCommandHandler();
         slashCommandHandler.addCommands(
+                new langCommand(),
                 new playCommand(),
                 new stopCommand(),
                 new skipCommand(),
                 new loopCommand(),
-                new shuffleCommand()
+                new shuffleCommand(),
+                new pingCommand()
         );
 
         return slashCommandHandler;
@@ -110,6 +123,8 @@ public class Strawberry {
     private static List<Object> registerEvents() {
         List<Object> listeners = new ArrayList<>();
         listeners.add(new ButtonHandler());
+        listeners.add(new GuildLeaveListener());
+        listeners.add(new GuildJoinListener());
 
         return listeners;
     }
