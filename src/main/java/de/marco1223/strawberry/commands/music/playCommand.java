@@ -58,7 +58,7 @@ public class playCommand implements SlashCommandInterface {
             }
 
         } else {
-            event.getHook().sendMessageEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.errors.noVoiceChannel.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.noVoiceChannel.description"), null, event.getUser().getAvatarUrl(), null, null, null)).queue();
+            event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.errors.noVoiceChannel.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.noVoiceChannel.description"), null, event.getUser().getAvatarUrl(), null, null, null)).queue();
         }
 
     }
