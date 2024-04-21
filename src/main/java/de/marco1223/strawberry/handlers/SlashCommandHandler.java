@@ -40,12 +40,9 @@ public class SlashCommandHandler extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         // Get our slash command by name
         SlashCommandInterface slashCommand = commands.get(event.getName());
-        if (slashCommand == null) {
-            event.reply("This command was not found")
-                    .setEphemeral(true)
-                    .queue();
-            return;
-        }
+
+        // The slash command exists with such name, execute it
+        slashCommand.execute(event);
 
     }
 
