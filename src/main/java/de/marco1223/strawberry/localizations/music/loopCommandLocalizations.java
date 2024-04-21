@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.interactions.commands.localization.LocalizationFuncti
 import java.util.HashMap;
 import java.util.Map;
 
-public class loopCoammdLocalizations implements LocalizationFunction {
+public class loopCommandLocalizations implements LocalizationFunction {
     @Override
     public Map<DiscordLocale, String> apply(String localizationKey) {
         Map<DiscordLocale, String> map = new HashMap<>();

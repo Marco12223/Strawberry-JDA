@@ -3,7 +3,7 @@ package de.marco1223.strawberry.commands.music;
 import de.marco1223.strawberry.Strawberry;
 import de.marco1223.strawberry.handlers.api.LanguageHandler;
 import de.marco1223.strawberry.interfaces.SlashCommandInterface;
-import de.marco1223.strawberry.localizations.music.shuffleCommandLocalizations;
+import de.marco1223.strawberry.localizations.music.loopCommandLocalizations;
 import de.marco1223.strawberry.utils.EmbedPattern;
 import dev.arbjerg.lavalink.client.player.LavalinkPlayer;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -51,7 +51,7 @@ public class loopCommand implements SlashCommandInterface {
     @NotNull
     @Override
     public CommandData getCommandData() {
-        LocalizationFunction localizations = new shuffleCommandLocalizations();
+        LocalizationFunction localizations = new loopCommandLocalizations();
 
         return Commands.slash("loop", LanguageHandler.Language("en-US", "values.shuffleCommand.description"))
                 .setGuildOnly(true)
