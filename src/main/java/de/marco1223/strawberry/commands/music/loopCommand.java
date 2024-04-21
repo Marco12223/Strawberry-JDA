@@ -32,18 +32,17 @@ public class loopCommand implements SlashCommandInterface {
                         Strawberry.repeat.put(event.getGuild().getIdLong(), !Strawberry.repeat.get(event.getGuild().getIdLong()));
                     }
 
-                    event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.loopCommand.embed.success.title"), LanguageHandler.Language(lang, "values.loopCommand.embed.success.description").replace("{state}", Strawberry.repeat.get(event.getGuild().getIdLong()).toString()), null, event.getUser().getAvatarUrl(), null, null, null)).queue();
+                    event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.loopCommand.embed.success.title"), LanguageHandler.Language(lang, "values.loopCommand.embed.success.description").replace("{state}", Strawberry.repeat.get(event.getGuild().getIdLong()).toString()), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
 
                 } else {
-                    event.replyEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.loopCommand.embed.errors.noTrack.title"), LanguageHandler.Language(lang, "values.loopCommand.embed.errors.noTrack.description"), null, event.getUser().getAvatarUrl(), null, null, null)).queue();
+                    event.replyEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.loopCommand.embed.errors.noTrack.title"), LanguageHandler.Language(lang, "values.loopCommand.embed.errors.noTrack.description"), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
                 }
 
             } else {
-                event.replyEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.loopCommand.embed.errors.notInSameVoiceChannel.title"), LanguageHandler.Language(lang, "values.loopCommand.embed.errors.notInSameVoiceChannel.description"), null, event.getUser().getAvatarUrl(), null, null, null)).queue();
+                event.replyEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.loopCommand.embed.errors.notInSameVoiceChannel.title"), LanguageHandler.Language(lang, "values.loopCommand.embed.errors.notInSameVoiceChannel.description"), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
             }
-
         } else {
-            event.replyEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.loopCommand.embed.errors.noVoiceChannel.title"), LanguageHandler.Language(lang, "values.loopCommand.embed.errors.noVoiceChannel.description"), null, event.getUser().getAvatarUrl(), null, null, null)).queue();
+            event.replyEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.loopCommand.embed.errors.noVoiceChannel.title"), LanguageHandler.Language(lang, "values.loopCommand.embed.errors.noVoiceChannel.description"), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
         }
 
     }
