@@ -63,6 +63,8 @@ public class AudioListeners {
                         queueHandler.getQueue().remove(0);
                     }
 
+                    Strawberry.currentTrack.put(event.getGuildId(), trackInfo);
+
                     List<MessageEmbed.Field> fields = new ArrayList<>();
 
                     fields.add(new MessageEmbed.Field(LanguageHandler.Language(lang, "values.playCommand.embed.success.fields.title"), "`" +  trackInfo.getTitle() + "`", true));
@@ -89,31 +91,34 @@ public class AudioListeners {
 
                 } else {
                     queueHandler.clearQueue();
-                    player.stopTrack().subscribe();
-                    player.setTrack(null).subscribe();
                     Link link = client.getOrCreateLink(event.getGuildId());
-                    link.destroy().subscribe();
+                    link.updatePlayer((update) -> {
+                        update.setTrack(null).setPaused(false);
+                    }).subscribe((__) -> {
 
+                        if(Strawberry.panelMessage.containsKey(event.getGuildId())) {
+                            Long channelId = Strawberry.panelMessage.get(event.getGuildId()).get("channel");
+                            Long messageId = Strawberry.panelMessage.get(event.getGuildId()).get("message");
 
-                    if(Strawberry.panelMessage.containsKey(event.getGuildId())) {
-                        Long channelId = Strawberry.panelMessage.get(event.getGuildId()).get("channel");
-                        Long messageId = Strawberry.panelMessage.get(event.getGuildId()).get("message");
-
-                        try {
-                            jda.getGuildById(event.getGuildId()).getTextChannelById(channelId).deleteMessageById(messageId).queue();
-                        } catch (Exception e) {
                             try {
-                                jda.getGuildById(event.getGuildId()).getVoiceChannelById(channelId).deleteMessageById(messageId).queue();
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
+                                jda.getGuildById(event.getGuildId()).getTextChannelById(channelId).deleteMessageById(messageId).queue();
+                            } catch (Exception e) {
+                                try {
+                                    jda.getGuildById(event.getGuildId()).getVoiceChannelById(channelId).deleteMessageById(messageId).queue();
+                                } catch (Exception ex) {
+                                    ex.printStackTrace();
+                                }
                             }
+
+                            Strawberry.panelMessage.remove(event.getGuildId());
+
                         }
 
-                        Strawberry.panelMessage.remove(event.getGuildId());
+                        jda.getGuildById(event.getGuildId()).getJDA().getDirectAudioController().disconnect(jda.getGuildById(event.getGuildId()));
 
-                    }
+                    });
 
-                    jda.getGuildById(event.getGuildId()).getAudioManager().closeAudioConnection();
+                    link.destroy();
 
                 }
 

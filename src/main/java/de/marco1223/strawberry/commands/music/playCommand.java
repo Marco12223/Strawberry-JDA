@@ -25,6 +25,7 @@ public class playCommand implements SlashCommandInterface {
     public void execute(@NotNull SlashCommandInteractionEvent event) {
         String lang = LanguageHandler.getGuildLocale(event.getGuild().getId());
         String identifier = event.getOption("query").getAsString();
+        event.deferReply(false).queue();
 
         if (event.getMember().getVoiceState().inAudioChannel()) {
             event.getJDA().getDirectAudioController().connect(event.getMember().getVoiceState().getChannel());

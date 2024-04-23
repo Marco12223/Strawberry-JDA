@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
+import net.dv8tion.jda.internal.utils.JDALogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,15 +44,16 @@ public class AudioHandler extends AbstractAudioLoadResultHandler  {
     public void loadFailed(@NotNull LoadFailed loadFailed) {
         if(event != null) {
             String lang = LanguageHandler.getGuildLocale(String.valueOf(link.getGuildId()));
-            event.replyEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.playCommand.embed.errors.loadFailed.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.loadFailed.description"), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
+            event.getHook().sendMessageEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.playCommand.embed.errors.loadFailed.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.loadFailed.description"), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
         }
+        JDALogger.getLog("AudioHandler").error("Failed to load track: " + loadFailed.getException());
     }
 
     @Override
     public void noMatches() {
         if(event != null) {
             String lang = LanguageHandler.getGuildLocale(String.valueOf(link.getGuildId()));
-            event.replyEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.playCommand.embed.errors.noResults.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.noResults.description"), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
+            event.getHook().sendMessageEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.playCommand.embed.errors.noResults.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.noResults.description"), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
         }
     }
 
@@ -72,7 +74,7 @@ public class AudioHandler extends AbstractAudioLoadResultHandler  {
             
         } else {
             String lang = LanguageHandler.getGuildLocale(String.valueOf(link.getGuildId()));
-            event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.playlist.title"), LanguageHandler.Language(lang, "values.playCommand.embed.playlist.description").replace("{size}", String.valueOf(playlistLoaded.getTracks().size())).replace("{name}", playlistLoaded.getInfo().getName()), null, event.getUser().getAvatarUrl(), null, null, playlistLoaded.getTracks().get(0).getInfo().getArtworkUrl())).queue();
+            event.getHook().sendMessageEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.playlist.title"), LanguageHandler.Language(lang, "values.playCommand.embed.playlist.description").replace("{size}", String.valueOf(playlistLoaded.getTracks().size())).replace("{name}", playlistLoaded.getInfo().getName()), null, event.getUser().getAvatarUrl(), null, null, playlistLoaded.getTracks().get(0).getInfo().getArtworkUrl())).queue();
         }
 
     }
@@ -139,20 +141,17 @@ public class AudioHandler extends AbstractAudioLoadResultHandler  {
                             fields.add(new MessageEmbed.Field(LanguageHandler.Language(lang, "values.playCommand.embed.success.fields.duration"), "`" + TimeUtils.formatMillisToHMS(playingTrack.getInfo().getLength()) + "`", true));
 
                             if(playlistSize != null) {
-                                event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.success.title"), LanguageHandler.Language(lang, "values.playCommand.embed.success.description").replace("{size}", playlistSize.toString()), null, event.getUser().getAvatarUrl(), fields, null, playingTrack.getInfo().getArtworkUrl()))
+                                event.getHook().sendMessageEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.success.title"), LanguageHandler.Language(lang, "values.playCommand.embed.success.description").replace("{size}", playlistSize.toString()), null, event.getUser().getAvatarUrl(), fields, null, playingTrack.getInfo().getArtworkUrl()))
                                         .addComponents(buttonsRow, menuRow)
                                         .queue(message -> {
-                                            message.retrieveOriginal().queue(reMessage -> {
-                                                Strawberry.panelMessage.put(event.getGuild().getIdLong(), Map.of("channel", reMessage.getChannelIdLong(), "message", reMessage.getIdLong()));
-                                            });
+                                            Strawberry.panelMessage.put(event.getGuild().getIdLong(), Map.of("channel", message.getChannelIdLong(), "message", message.getIdLong()));
                                         });
                             } else {
-                                event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.success.title"), null, null, event.getUser().getAvatarUrl(), fields, null, playingTrack.getInfo().getArtworkUrl()))
+                                event.getHook().sendMessageEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.success.title"), null, null, event.getUser().getAvatarUrl(), fields, null, playingTrack.getInfo().getArtworkUrl()))
                                         .addComponents(buttonsRow, menuRow)
                                         .queue(message -> {
-                                            message.retrieveOriginal().queue(reMessage -> {
-                                                Strawberry.panelMessage.put(event.getGuild().getIdLong(), Map.of("channel", reMessage.getChannelIdLong(), "message", reMessage.getIdLong()));
-                                            });
+                                            Strawberry.panelMessage.put(event.getGuild().getIdLong(), Map.of("channel", message.getChannelIdLong(), "message", message.getIdLong()));
+                                            System.out.println(message.getIdLong());
                                         });
                             }
 
@@ -166,9 +165,9 @@ public class AudioHandler extends AbstractAudioLoadResultHandler  {
             queueHandler.addQueue(track);
 
             if(!queueHandler.isQueueEmpty()) {
-                event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.queue.title"), LanguageHandler.Language(lang, "values.playCommand.embed.queue.description").replace("{title}", track.getInfo().getTitle()).replace("{artist}", track.getInfo().getAuthor()), null, event.getUser().getAvatarUrl(), null, null, track.getInfo().getArtworkUrl())).setEphemeral(true).queue();
+                event.getHook().sendMessageEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.queue.title"), LanguageHandler.Language(lang, "values.playCommand.embed.queue.description").replace("{title}", track.getInfo().getTitle()).replace("{artist}", track.getInfo().getAuthor()), null, event.getUser().getAvatarUrl(), null, null, track.getInfo().getArtworkUrl())).setEphemeral(true).queue();
             } else {
-                event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.errors.queueFull.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.queueFull.description"), null, event.getUser().getAvatarUrl(), null, null, track.getInfo().getArtworkUrl())).setEphemeral(true).queue();
+                event.getHook().sendMessageEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.errors.queueFull.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.queueFull.description"), null, event.getUser().getAvatarUrl(), null, null, track.getInfo().getArtworkUrl())).setEphemeral(true).queue();
             }
 
         }
