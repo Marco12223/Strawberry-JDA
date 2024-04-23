@@ -7,6 +7,7 @@ import de.marco1223.strawberry.handlers.SlashCommandHandler;
 import de.marco1223.strawberry.handlers.api.AuthHandler;
 import de.marco1223.strawberry.handlers.api.GuildHandler;
 import de.marco1223.strawberry.handlers.music.ButtonHandler;
+import de.marco1223.strawberry.listeners.music.DestoryLinkOnLeaveListener;
 import de.marco1223.strawberry.listeners.system.GuildJoinListener;
 import de.marco1223.strawberry.listeners.system.GuildLeaveListener;
 import de.marco1223.strawberry.tasks.LanguageLocaleUpdateTask;
@@ -125,6 +126,7 @@ public class Strawberry {
         listeners.add(new ButtonHandler());
         listeners.add(new GuildLeaveListener());
         listeners.add(new GuildJoinListener());
+        listeners.add(new DestoryLinkOnLeaveListener());
 
         return listeners;
     }
