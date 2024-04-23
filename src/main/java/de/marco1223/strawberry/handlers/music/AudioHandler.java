@@ -151,7 +151,6 @@ public class AudioHandler extends AbstractAudioLoadResultHandler  {
                                         .addComponents(buttonsRow, menuRow)
                                         .queue(message -> {
                                             Strawberry.panelMessage.put(event.getGuild().getIdLong(), Map.of("channel", message.getChannelIdLong(), "message", message.getIdLong()));
-                                            System.out.println(message.getIdLong());
                                         });
                             }
 
