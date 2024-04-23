@@ -13,11 +13,11 @@ public class playCoammdLocalizations implements LocalizationFunction {
         Map<DiscordLocale, String> map = new HashMap<>();
 
         switch (localizationKey) {
-            case "lang.description":
+            case "play.description":
                 map.put(DiscordLocale.GERMAN, LanguageHandler.Language("de", "values.langCommand.description"));
                 map.put(DiscordLocale.ENGLISH_US, LanguageHandler.Language("en-US", "values.langCommand.description"));
                 break;
-            case "lang.options.language.description":
+            case "play.options.language.description":
                 map.put(DiscordLocale.GERMAN, LanguageHandler.Language("de", "values.langCommand.options.language.description"));
                 map.put(DiscordLocale.ENGLISH_US, LanguageHandler.Language("en-US", "values.langCommand.options.language.description"));
                 break;
