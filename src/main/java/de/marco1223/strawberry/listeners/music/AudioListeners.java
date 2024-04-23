@@ -91,8 +91,6 @@ public class AudioListeners {
 
                 } else {
                     queueHandler.clearQueue();
-                    Link link = client.getOrCreateLink(event.getGuildId());
-                    link.getNode().destroyPlayerAndLink(event.getGuildId()).subscribe();
 
                     if(Strawberry.panelMessage.containsKey(event.getGuildId())) {
                         Long channelId = Strawberry.panelMessage.get(event.getGuildId()).get("channel");
