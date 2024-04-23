@@ -12,7 +12,7 @@ public class DestoryLinkOnLeaveListener extends ListenerAdapter implements Event
     public void onGuildVoiceUpdate(GuildVoiceUpdateEvent event) {
         if(event.getMember().getIdLong() == event.getGuild().getSelfMember().getIdLong() && event.getChannelLeft() != null) {
             Link link = Strawberry.getLavalinkClient().getOrCreateLink(event.getGuild().getIdLong());
-            link.getNode().destroyPlayerAndLink(link.getGuildId());
+            link.getNode().destroyPlayerAndLink(link.getGuildId()).subscribe();
         }
     }
 }
