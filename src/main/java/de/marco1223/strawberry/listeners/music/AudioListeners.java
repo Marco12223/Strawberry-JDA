@@ -78,14 +78,22 @@ public class AudioListeners {
                         try {
                             jda.getGuildById(event.getGuildId()).getTextChannelById(channelId).editMessageEmbedsById(messageId, embed).queue();
                         } catch (Exception e) {
-                            jda.getGuildById(event.getGuildId()).getVoiceChannelById(channelId).editMessageEmbedsById(messageId, embed).queue();
+                            try {
+                                jda.getGuildById(event.getGuildId()).getVoiceChannelById(channelId).editMessageEmbedsById(messageId, embed).queue();
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
 
                     }
 
                 } else {
+                    queueHandler.clearQueue();
                     player.stopTrack().subscribe();
                     player.setTrack(null).subscribe();
+                    Link link = client.getOrCreateLink(event.getGuildId());
+                    link.destroy().subscribe();
+
 
                     if(Strawberry.panelMessage.containsKey(event.getGuildId())) {
                         Long channelId = Strawberry.panelMessage.get(event.getGuildId()).get("channel");
@@ -94,7 +102,11 @@ public class AudioListeners {
                         try {
                             jda.getGuildById(event.getGuildId()).getTextChannelById(channelId).deleteMessageById(messageId).queue();
                         } catch (Exception e) {
-                            jda.getGuildById(event.getGuildId()).getVoiceChannelById(channelId).deleteMessageById(messageId).queue();
+                            try {
+                                jda.getGuildById(event.getGuildId()).getVoiceChannelById(channelId).deleteMessageById(messageId).queue();
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
 
                         Strawberry.panelMessage.remove(event.getGuildId());
