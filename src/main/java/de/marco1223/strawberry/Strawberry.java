@@ -73,7 +73,7 @@ public class Strawberry {
         shardManager = builder.build();
 
         while (!(shardManager.getStatus(shardManager.getShardsTotal()-1) == JDA.Status.CONNECTED)) {
-            Thread.sleep(3000);
+            Thread.sleep(1000);
         }
 
         JDALogger.getLog(Strawberry.class).info("-".repeat(20) + "Bot Information" + "-".repeat(20));
