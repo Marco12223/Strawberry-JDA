@@ -92,33 +92,27 @@ public class AudioListeners {
                 } else {
                     queueHandler.clearQueue();
                     Link link = client.getOrCreateLink(event.getGuildId());
-                    link.updatePlayer((update) -> {
-                        update.setTrack(null).setPaused(false);
-                    }).subscribe((__) -> {
+                    link.getNode().destroyPlayerAndLink(event.getGuildId()).subscribe();
 
-                        if(Strawberry.panelMessage.containsKey(event.getGuildId())) {
-                            Long channelId = Strawberry.panelMessage.get(event.getGuildId()).get("channel");
-                            Long messageId = Strawberry.panelMessage.get(event.getGuildId()).get("message");
+                    if(Strawberry.panelMessage.containsKey(event.getGuildId())) {
+                        Long channelId = Strawberry.panelMessage.get(event.getGuildId()).get("channel");
+                        Long messageId = Strawberry.panelMessage.get(event.getGuildId()).get("message");
 
+                        try {
+                            jda.getGuildById(event.getGuildId()).getTextChannelById(channelId).deleteMessageById(messageId).queue();
+                        } catch (Exception e) {
                             try {
-                                jda.getGuildById(event.getGuildId()).getTextChannelById(channelId).deleteMessageById(messageId).queue();
-                            } catch (Exception e) {
-                                try {
-                                    jda.getGuildById(event.getGuildId()).getVoiceChannelById(channelId).deleteMessageById(messageId).queue();
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
-                                }
+                                jda.getGuildById(event.getGuildId()).getVoiceChannelById(channelId).deleteMessageById(messageId).queue();
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
                             }
-
-                            Strawberry.panelMessage.remove(event.getGuildId());
-
                         }
 
-                        jda.getGuildById(event.getGuildId()).getJDA().getDirectAudioController().disconnect(jda.getGuildById(event.getGuildId()));
+                        Strawberry.panelMessage.remove(event.getGuildId());
 
-                    });
+                    }
 
-                    link.destroy();
+                    jda.getGuildById(event.getGuildId()).getJDA().getDirectAudioController().disconnect(jda.getGuildById(event.getGuildId()));
 
                 }
 

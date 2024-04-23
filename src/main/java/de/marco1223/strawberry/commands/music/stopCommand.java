@@ -6,6 +6,8 @@ import de.marco1223.strawberry.handlers.music.QueueHandler;
 import de.marco1223.strawberry.interfaces.SlashCommandInterface;
 import de.marco1223.strawberry.localizations.music.stopCoammdLocalizations;
 import de.marco1223.strawberry.utils.EmbedPattern;
+import dev.arbjerg.lavalink.client.LavalinkClient;
+import dev.arbjerg.lavalink.client.Link;
 import dev.arbjerg.lavalink.client.player.LavalinkPlayer;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -26,12 +28,12 @@ public class stopCommand implements SlashCommandInterface {
                 LavalinkPlayer player = Strawberry.getLavalinkClient().getOrCreateLink(event.getGuild().getIdLong()).getPlayer().block();
 
                 if(player.getTrack() != null) {
-                    QueueHandler queueHandler = new QueueHandler(event.getGuild().getIdLong());
+                    LavalinkClient client = Strawberry.getLavalinkClient();
+                    Link link = client.getOrCreateLink(event.getGuild().getIdLong());
 
-                    queueHandler.clearQueue();
-                    player.stopTrack().subscribe();
-                    player.setTrack(null).subscribe();
-                    event.getGuild().getAudioManager().closeAudioConnection();
+                    link.updatePlayer((update) -> {
+                        update.setTrack(null).setPaused(false);
+                    }).subscribe();
 
                     event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.stopCommand.embed.success.title"), LanguageHandler.Language(lang, "values.stopCommand.embed.success.description"), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
 
