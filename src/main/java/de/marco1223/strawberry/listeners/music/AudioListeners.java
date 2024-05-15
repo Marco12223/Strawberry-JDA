@@ -112,6 +112,11 @@ public class AudioListeners {
 
                     }
 
+
+                    Link link = client.getOrCreateLink(event.getGuildId());
+                    link.destroy().subscribe();
+                    jda.getGuildById(event.getGuildId()).getJDA().getDirectAudioController().disconnect(jda.getGuildById(event.getGuildId()));
+
                 }
 
             }
