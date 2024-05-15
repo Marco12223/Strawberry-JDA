@@ -46,7 +46,6 @@ public class AudioHandler extends AbstractAudioLoadResultHandler  {
             String lang = LanguageHandler.getGuildLocale(String.valueOf(link.getGuildId()));
             event.getHook().sendMessageEmbeds(EmbedPattern.error(LanguageHandler.Language(lang, "values.playCommand.embed.errors.loadFailed.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.loadFailed.description"), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
         }
-        JDALogger.getLog("AudioHandler").error("Failed to load track: " + loadFailed.getException());
     }
 
     @Override

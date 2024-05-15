@@ -28,9 +28,9 @@ public class stopCommand implements SlashCommandInterface {
                 LavalinkPlayer player = Strawberry.getLavalinkClient().getOrCreateLink(event.getGuild().getIdLong()).getPlayer().block();
 
                 if(player.getTrack() != null) {
-                    LavalinkClient client = Strawberry.getLavalinkClient();
-                    Link link = client.getOrCreateLink(event.getGuild().getIdLong());
-                    link.getNode().destroyPlayerAndLink(link.getGuildId()).subscribe();
+                    QueueHandler queueHandler = new QueueHandler(event.getGuild().getIdLong());
+                    queueHandler.clearQueue();
+                    player.setTrack(null).setPaused(false).subscribe();
 
                     event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.stopCommand.embed.success.title"), LanguageHandler.Language(lang, "values.stopCommand.embed.success.description"), null, event.getUser().getAvatarUrl(), null, null, null)).setEphemeral(true).queue();
 
