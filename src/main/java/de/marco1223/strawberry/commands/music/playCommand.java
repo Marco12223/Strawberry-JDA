@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
 
 public class playCommand implements SlashCommandInterface {
     @Override
@@ -27,7 +28,10 @@ public class playCommand implements SlashCommandInterface {
         String identifier = event.getOption("query").getAsString();
         event.deferReply(false).queue();
 
-        if (event.getMember().getVoiceState().inAudioChannel()) {
+        if (!event.getMember().getVoiceState().inAudioChannel()) {
+            event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.errors.noVoiceChannel.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.noVoiceChannel.description"), null, event.getUser().getAvatarUrl(), null, null, null)).queue();
+
+        } else {
             event.getJDA().getDirectAudioController().connect(event.getMember().getVoiceState().getChannel());
 
             LavalinkClient client = Strawberry.getLavalinkClient();
@@ -41,9 +45,9 @@ public class playCommand implements SlashCommandInterface {
                     Long messageId = Strawberry.panelMessage.get(event.getGuild().getIdLong()).get("message");
 
                     try {
-                        event.getGuild().getTextChannelById(channelId).deleteMessageById(messageId).queue();
+                        event.getJDA().getShardManager().getGuildById(event.getGuild().getId()).getTextChannelById(channelId).deleteMessageById(messageId).queue();
                     } catch (Exception e) {
-                        event.getGuild().getVoiceChannelById(channelId).deleteMessageById(messageId).queue();
+                        event.getJDA().getShardManager().getGuildById(event.getGuild().getId()).getVoiceChannelById(channelId).deleteMessageById(messageId).queue();
                     }
 
                     Strawberry.panelMessage.remove(event.getGuild().getIdLong());
@@ -58,8 +62,6 @@ public class playCommand implements SlashCommandInterface {
                 link.loadItem("dzsearch:" + identifier).subscribe(new AudioHandler(link, event));
             }
 
-        } else {
-            event.replyEmbeds(EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.errors.noVoiceChannel.title"), LanguageHandler.Language(lang, "values.playCommand.embed.errors.noVoiceChannel.description"), null, event.getUser().getAvatarUrl(), null, null, null)).queue();
         }
 
     }
