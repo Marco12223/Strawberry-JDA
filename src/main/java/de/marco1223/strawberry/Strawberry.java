@@ -1,5 +1,6 @@
 package de.marco1223.strawberry;
 
+import de.marco1223.strawberry.api.BootApplication;
 import de.marco1223.strawberry.commands.music.*;
 import de.marco1223.strawberry.commands.system.langCommand;
 import de.marco1223.strawberry.commands.system.pingCommand;
@@ -52,6 +53,8 @@ public class Strawberry {
         Dotenv dotenv = Dotenv.configure()
                 .directory("./")
                 .load();
+
+        BootApplication.start(args);
 
         AuthHandler.init(dotenv.get("API_USER"), dotenv.get("API_PASS"), dotenv.get("API_URL"));
         startTasks();
