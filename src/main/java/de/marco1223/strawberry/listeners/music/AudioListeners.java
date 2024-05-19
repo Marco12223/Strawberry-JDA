@@ -41,55 +41,85 @@ public class AudioListeners {
 
             if(event instanceof TrackEndEvent) {
 
-                QueueHandler queueHandler = new QueueHandler(event.getGuildId());
-                LavalinkPlayer player = client.getOrCreateLink(event.getGuildId()).getPlayer().block();
+                try {
+                    QueueHandler queueHandler = new QueueHandler(event.getGuildId());
+                    LavalinkPlayer player = client.getOrCreateLink(event.getGuildId()).getPlayer().block();
 
-                if((Strawberry.repeat.containsKey(event.getGuildId()) && Strawberry.repeat.get(event.getGuildId()))) {
-                    Link link = client.getOrCreateLink(event.getGuildId());
-                    link.loadItem(Objects.requireNonNull(Strawberry.currentTrack.get(event.getGuildId()).getUri())).subscribe(new AudioHandler(link, null));
-                } else if ((Strawberry.queue.containsKey(event.getGuildId()) && !queueHandler.isQueueEmpty())) {
+                    if((Strawberry.repeat.containsKey(event.getGuildId()) && Strawberry.repeat.get(event.getGuildId()))) {
+                        Link link = client.getOrCreateLink(event.getGuildId());
+                        link.loadItem(Objects.requireNonNull(Strawberry.currentTrack.get(event.getGuildId()).getUri())).subscribe(new AudioHandler(link, null));
+                    } else if ((Strawberry.queue.containsKey(event.getGuildId()) && !queueHandler.isQueueEmpty())) {
 
-                    Link link = client.getOrCreateLink(event.getGuildId());
-                    String lang = LanguageHandler.getGuildLocale(String.valueOf(event.getGuildId()));
-                    TrackInfo trackInfo = null;
+                        Link link = client.getOrCreateLink(event.getGuildId());
+                        String lang = LanguageHandler.getGuildLocale(String.valueOf(event.getGuildId()));
+                        TrackInfo trackInfo = null;
 
-                    if((Strawberry.shuffle.containsKey(event.getGuildId()) && Strawberry.shuffle.get(event.getGuildId()))) {
-                        Integer random = new Random().nextInt(queueHandler.getQueue().size());
-                        link.loadItem(queueHandler.getTrackInfoByIndex(random).getInfo().getUri()).subscribe(new AudioHandler(link, null));
-                        trackInfo = queueHandler.getTrackInfoByIndex(random).getInfo();
-                        queueHandler.getQueue().remove(random);
-                    } else {
-                        link.loadItem(queueHandler.getNextTrack().getInfo().getUri()).subscribe(new AudioHandler(link, null));
-                        trackInfo = queueHandler.getNextTrack().getInfo();
-                        queueHandler.getQueue().remove(0);
-                    }
-
-                    Strawberry.currentTrack.put(event.getGuildId(), trackInfo);
-
-                    List<MessageEmbed.Field> fields = new ArrayList<>();
-
-                    fields.add(new MessageEmbed.Field(LanguageHandler.Language(lang, "values.playCommand.embed.success.fields.title"), "`" +  trackInfo.getTitle() + "`", true));
-                    fields.add(new MessageEmbed.Field(LanguageHandler.Language(lang, "values.playCommand.embed.success.fields.artist"), "`" + trackInfo.getAuthor() + "`", true));
-                    fields.add(new MessageEmbed.Field(LanguageHandler.Language(lang, "values.playCommand.embed.success.fields.duration"), "`" + TimeUtils.formatMillisToHMS(trackInfo.getLength()) + "`", true));
-
-                    MessageEmbed embed = EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.success.title"), null, null, null, fields, null, trackInfo.getArtworkUrl());
-
-                    if(Strawberry.panelMessage.containsKey(event.getGuildId())) {
-                        Long channelId = Strawberry.panelMessage.get(event.getGuildId()).get("channel");
-                        Long messageId = Strawberry.panelMessage.get(event.getGuildId()).get("message");
-                        Guild guild = jda.getGuildById(event.getGuildId());
-
-                        if(guild != null) {
-                            try {
-                                guild.getTextChannelById(channelId).editMessageEmbedsById(messageId, embed).queue();
-                            } catch (Exception e) {
-                                guild.getVoiceChannelById(channelId).editMessageEmbedsById(messageId, embed).queue();
-                            }
+                        if((Strawberry.shuffle.containsKey(event.getGuildId()) && Strawberry.shuffle.get(event.getGuildId()))) {
+                            Integer random = new Random().nextInt(queueHandler.getQueue().size());
+                            link.loadItem(queueHandler.getTrackInfoByIndex(random).getInfo().getUri()).subscribe(new AudioHandler(link, null));
+                            trackInfo = queueHandler.getTrackInfoByIndex(random).getInfo();
+                            queueHandler.getQueue().remove(random);
+                        } else {
+                            link.loadItem(queueHandler.getNextTrack().getInfo().getUri()).subscribe(new AudioHandler(link, null));
+                            trackInfo = queueHandler.getNextTrack().getInfo();
+                            queueHandler.getQueue().remove(0);
                         }
 
-                    }
+                        Strawberry.currentTrack.put(event.getGuildId(), trackInfo);
 
-                } else {
+                        List<MessageEmbed.Field> fields = new ArrayList<>();
+
+                        fields.add(new MessageEmbed.Field(LanguageHandler.Language(lang, "values.playCommand.embed.success.fields.title"), "`" +  trackInfo.getTitle() + "`", true));
+                        fields.add(new MessageEmbed.Field(LanguageHandler.Language(lang, "values.playCommand.embed.success.fields.artist"), "`" + trackInfo.getAuthor() + "`", true));
+                        fields.add(new MessageEmbed.Field(LanguageHandler.Language(lang, "values.playCommand.embed.success.fields.duration"), "`" + TimeUtils.formatMillisToHMS(trackInfo.getLength()) + "`", true));
+
+                        MessageEmbed embed = EmbedPattern.info(LanguageHandler.Language(lang, "values.playCommand.embed.success.title"), null, null, null, fields, null, trackInfo.getArtworkUrl());
+
+                        if(Strawberry.panelMessage.containsKey(event.getGuildId())) {
+                            Long channelId = Strawberry.panelMessage.get(event.getGuildId()).get("channel");
+                            Long messageId = Strawberry.panelMessage.get(event.getGuildId()).get("message");
+                            Guild guild = jda.getGuildById(event.getGuildId());
+
+                            if(guild != null) {
+                                try {
+                                    guild.getTextChannelById(channelId).editMessageEmbedsById(messageId, embed).queue();
+                                } catch (Exception e) {
+                                    guild.getVoiceChannelById(channelId).editMessageEmbedsById(messageId, embed).queue();
+                                }
+                            }
+
+                        }
+
+                    } else {
+                        queueHandler.clearQueue();
+                        Guild guild = jda.getGuildById(event.getGuildId());
+                        guild.getJDA().getDirectAudioController().disconnect(guild);
+
+                        if(Strawberry.panelMessage.containsKey(event.getGuildId())) {
+                            Long channelId = Strawberry.panelMessage.get(event.getGuildId()).get("channel");
+                            Long messageId = Strawberry.panelMessage.get(event.getGuildId()).get("message");
+
+                            if(guild != null) {
+                                guild.getJDA().getDirectAudioController().disconnect(guild);
+                                try {
+                                    guild.getTextChannelById(channelId).deleteMessageById(messageId).queue();
+                                } catch (Exception e) {
+                                    guild.getVoiceChannelById(channelId).deleteMessageById(messageId).queue();
+                                }
+
+                            }
+
+                            Strawberry.panelMessage.remove(event.getGuildId());
+
+                        }
+
+
+                        Link link = client.getOrCreateLink(event.getGuildId());
+                        link.destroy().subscribe();
+                        jda.getGuildById(event.getGuildId()).getJDA().getDirectAudioController().disconnect(jda.getGuildById(event.getGuildId()));
+                    }
+                } catch (Exception e2) {
+                    QueueHandler queueHandler = new QueueHandler(event.getGuildId());
                     queueHandler.clearQueue();
                     Guild guild = jda.getGuildById(event.getGuildId());
                     guild.getJDA().getDirectAudioController().disconnect(guild);
@@ -116,7 +146,7 @@ public class AudioListeners {
                     Link link = client.getOrCreateLink(event.getGuildId());
                     link.destroy().subscribe();
                     jda.getGuildById(event.getGuildId()).getJDA().getDirectAudioController().disconnect(jda.getGuildById(event.getGuildId()));
-
+                    JDALogger.getLog(AudioListeners.class).error("An error occurred while playing the next track", e2);
                 }
 
             }
