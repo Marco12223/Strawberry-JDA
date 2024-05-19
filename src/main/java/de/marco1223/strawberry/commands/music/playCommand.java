@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Objects;
 
 public class playCommand implements SlashCommandInterface {
     @Override
