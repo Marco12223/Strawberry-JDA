@@ -2,6 +2,7 @@ package de.marco1223.strawberry.handlers.api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import de.marco1223.strawberry.handlers.api.features.AutoroleHandler;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.GuildManagementApi;
 import net.dv8tion.jda.api.entities.Guild;
@@ -62,6 +63,10 @@ public class GuildHandler {
             return false;
         }
 
+    }
+
+    public static AutoroleHandler autoroleHandler(String guildId) {
+        return new AutoroleHandler(guildId);
     }
 
 }
