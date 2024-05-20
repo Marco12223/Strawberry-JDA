@@ -36,8 +36,6 @@ public class VoteWebhook {
                 Guild guild = Strawberry.getShardManager().getGuildById("733493048750768210");
                 NewsChannel channel = guild.getNewsChannelById("1040964560389161010");
 
-                System.out.println("User " + user.getName() + " has voted for Strawberry on TOP.GG");
-
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setColor(ConfigUtil.DEFAULT_COLOR);
                 embed.setTimestamp(new Date().toInstant());
