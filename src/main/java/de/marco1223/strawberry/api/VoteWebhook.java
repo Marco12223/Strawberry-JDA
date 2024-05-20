@@ -40,6 +40,7 @@ public class VoteWebhook {
                 embed.setColor(ConfigUtil.DEFAULT_COLOR);
                 embed.setTimestamp(new Date().toInstant());
                 embed.setThumbnail(user.getAvatarUrl());
+                embed.setTitle("New Vote on TOP.GG");
                 embed.setUrl("https://top.gg/bot/733483316002422804/vote");
                 embed.setDescription("`" + user.getName() + "` has voted for **Strawberry** on TOP.GG.\nThank you for your support!");
                 MessageEmbed messageEmbed = embed.build();
